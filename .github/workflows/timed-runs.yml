@@ -1,0 +1,60 @@
+# Timed headless AI runs. Each row plays games for its duration and uploads
+# the per-game results as an artifact.
+#
+# GitHub-hosted runners stop any job after 6 hours, so the 1h, 2h and 4h rows
+# use ubuntu-latest. Longer rows need a self-hosted runner registered with the
+# label "long-run". Set the job limit on that runner's workflow as needed.
+
+name: timed-runs
+
+on:
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: "Base random seed (default: run id)"
+        required: false
+        default: ""
+
+jobs:
+  run:
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: ${{ matrix.timeout }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { label: 1h,  minutes: 60,    timeout: 75,      runner: ubuntu-latest }
+          - { label: 2h,  minutes: 120,   timeout: 150,     runner: ubuntu-latest }
+          - { label: 4h,  minutes: 240,   timeout: 300,     runner: ubuntu-latest }
+          - { label: 8h,  minutes: 480,   timeout: 540,     runner: long-run }
+          - { label: 1d,  minutes: 1440,  timeout: 1500,    runner: long-run }
+          - { label: 2d,  minutes: 2880,  timeout: 2940,    runner: long-run }
+          - { label: 4d,  minutes: 5760,  timeout: 5820,    runner: long-run }
+          - { label: 8d,  minutes: 11520, timeout: 11580,   runner: long-run }
+          - { label: 30d, minutes: 43200, timeout: 43260,   runner: long-run }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Play for ${{ matrix.label }}
+        env:
+          SEED: ${{ inputs.seed || github.run_id }}
+        run: |
+          mkdir -p results
+          python hamiltonian_snake.py --headless \
+            --minutes ${{ matrix.minutes }} \
+            --seed "$SEED" \
+            --out results/${{ matrix.label }}.jsonl \
+            --save results/${{ matrix.label }}-last.json
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ matrix.label }}
+          path: results/
+          retention-days: 30

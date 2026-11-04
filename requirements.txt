@@ -1,0 +1,2 @@
+# Headless runs and CI use only the standard library.
+# Windowed play needs pygame:  pip install pygame

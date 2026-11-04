@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+hamiltonian_save.json
+results/
