@@ -32,7 +32,7 @@ REWARD_CYCLE_BASE = 5
 REWARD_CYCLE_STREAK_CAP = 20
 REWARD_CLOSE = 1000        # body covers all cells and closes into a Hamiltonian cycle
 SHORTCUT_BONUS = 4         # AI value for an off-cycle step that gets closer to food
-DANGER_PENALTY = 400       # AI value penalty when the tail becomes unreachable
+DANGER_PENALTY = 300       # AI value penalty when the tail becomes unreachable
 DISCOUNT = 0.9             # AI discount for later moves in the search
 HUNGER_LIMIT = 400         # moves without food before the snake starves (stops endless cycling)
 
