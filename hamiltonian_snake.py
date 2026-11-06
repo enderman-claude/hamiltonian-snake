@@ -28,13 +28,13 @@ SAVE_FILE = "hamiltonian_save.json"
 DIR_LIST = [(0, -1), (0, 1), (-1, 0), (1, 0)]  # up, down, left, right
 
 REWARD_FOOD = 10
-REWARD_CYCLE_BASE = 5
-REWARD_CYCLE_STREAK_CAP = 20
+REWARD_CYCLE_BASE = 20
+REWARD_CYCLE_STREAK_CAP = 50
 REWARD_CLOSE = 1000        # body covers all cells and closes into a Hamiltonian cycle
-SHORTCUT_BONUS = 4         # AI value for an off-cycle step that gets closer to food
-DANGER_PENALTY = 300       # AI value penalty when the tail becomes unreachable
-DISCOUNT = 0.9             # AI discount for later moves in the search
-HUNGER_LIMIT = 400         # moves without food before the snake starves (stops endless cycling)
+SHORTCUT_BONUS = 1         # Keep off-cycle steps a rare, low-value alternative
+DANGER_PENALTY = 600       # Strongly discourage moves that make the tail unreachable
+DISCOUNT = 0.8             # AI discount for later moves in the search
+HUNGER_LIMIT = 10000         # moves without food before the snake starves (stops endless cycling)
 
 # The AI plans for growth and loop completion, not for raw points. If it planned
 # on raw points, circling the cycle would pay more than eating and it would never eat.
